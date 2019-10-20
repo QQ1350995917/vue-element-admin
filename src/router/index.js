@@ -84,6 +84,30 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/organization',
+    component: Layout,
+    children: [
+      {
+        path: 'organization',
+        component: () => import('@/views/organization/index'),
+        name: '组织管理',
+        meta: { title: '组织管理', icon: 'peoples', affix: true }
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/user/index'),
+        name: '用户管理',
+        meta: { title: '用户管理', icon: 'user', affix: true }
+      }
+    ]
+  },
+  {
     path: '/documentation',
     component: Layout,
     children: [
