@@ -91,7 +91,7 @@ export const constantRoutes = [
         path: 'organization',
         component: () => import('@/views/organization/index'),
         name: 'orgnaization',
-        meta: { title: 'orgnaization', icon: 'peoples', affix: true }
+        meta: { title: 'orgnaization', icon: 'peoples', affix: false }
       }
     ]
   },
@@ -103,7 +103,7 @@ export const constantRoutes = [
         path: 'user',
         component: () => import('@/views/user/index'),
         name: 'user',
-        meta: { title: 'user', icon: 'user', affix: true }
+        meta: { title: 'user', icon: 'user', affix: false }
       }
     ]
   },
@@ -115,7 +115,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation', affix: true }
+        meta: { title: 'documentation', icon: 'documentation', affix: false }
       }
     ]
   },
