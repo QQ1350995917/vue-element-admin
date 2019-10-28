@@ -2,19 +2,19 @@
   <div class="app-container">
     <!-- Note that row-key is necessary to get a correct row order. -->
     <el-table ref="dragTable" v-loading="listLoading" :data="list" row-key="id" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="65">
+      <el-table-column align="center" label="ID" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="110px" label="Name">
+      <el-table-column min-width="90px" label="Name">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="90px" label="Members">
+      <el-table-column min-width="60px" label="Members">
         <template slot-scope="scope">
           <span>{{ scope.row.members }}</span>
         </template>
@@ -57,6 +57,22 @@
       <!--<svg-icon class="drag-handler" icon-class="drag" />-->
       <!--</template>-->
       <!--</el-table-column>-->
+      <el-table-column :label="$t('table.actions')" align="center" width="200" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
+            {{ $t('table.edit') }}
+          </el-button>
+          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">
+            {{ $t('table.publish') }}
+          </el-button>
+          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">
+            {{ $t('table.draft') }}
+          </el-button>
+          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">
+            {{ $t('table.delete') }}
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!--&lt;!&ndash; $t is vue-i18n global function to translate lang (lang in @/lang)  &ndash;&gt;-->
     <!--<div class="show-d">-->
