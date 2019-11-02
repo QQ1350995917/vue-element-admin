@@ -86,7 +86,7 @@ export const constantRoutes = [
   {
     path: '/organization',
     component: Layout,
-    redirect: '/organization/list',
+    redirect: 'index',
     name: 'Organization',
     meta: {
       title: 'Organization',

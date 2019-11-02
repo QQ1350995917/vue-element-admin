@@ -40,8 +40,10 @@ service.interceptors.response.use(
    * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
    */
   response => {
-    const res = response.data
-    if (res.meta.code === 200) {
+    // const res = response.data
+    const res = response
+    console.log("request.js => response : " + JSON.stringify(response))
+    if (res.status === 200) {
       return res.data
     }
     if (res.code !== 20000) {

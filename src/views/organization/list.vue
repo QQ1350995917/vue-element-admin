@@ -1,7 +1,6 @@
 <template>
-  <div class="app-container">
-    <!-- Note that row-key is necessary to get a correct row order. -->
-    <el-table ref="dragTable" v-loading="listLoading" :data="list" row-key="id" border fit highlight-current-row style="width: 100%">
+  <div class="app-container" >
+    <el-table id="listTable" v-if="listOrgViewVisible" v-loading="loading" :data="list"  row-key="id" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="ID" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
@@ -37,26 +36,6 @@
           <span>{{ scope.row.createTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-
-      <!--<el-table-column align="center" label="Readings" width="95">-->
-      <!--<template slot-scope="scope">-->
-      <!--<span>{{ scope.row.pageviews }}</span>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
-
-      <!--<el-table-column class-name="status-col" label="Status" width="110">-->
-      <!--<template slot-scope="scope">-->
-      <!--<el-tag :type="scope.row.status | statusFilter">-->
-      <!--{{ scope.row.status }}-->
-      <!--</el-tag>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
-
-      <!--<el-table-column align="center" label="Drag" width="80">-->
-      <!--<template slot-scope="{}">-->
-      <!--<svg-icon class="drag-handler" icon-class="drag" />-->
-      <!--</template>-->
-      <!--</el-table-column>-->
       <el-table-column :label="$t('table.actions')" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
@@ -74,17 +53,44 @@
         </template>
       </el-table-column>
     </el-table>
-    <!--&lt;!&ndash; $t is vue-i18n global function to translate lang (lang in @/lang)  &ndash;&gt;-->
-    <!--<div class="show-d">-->
-    <!--{{ $t('table.dragTips1') }} : &nbsp; {{ oldList }}-->
-    <!--</div>-->
-    <!--<div class="show-d">-->
-    <!--{{ $t('table.dragTips2') }} : {{ newList }}-->
-    <!--</div>-->
+
+    <el-form v-if="createOrgViewVisible" v-loading="loading" inline-message :model="createOrgForm" :rules="createOrgRules" ref="createOrgForm">
+      <el-form-item prop="name">
+        <el-input status-icon prefix-icon="fa fa-user" v-model="createOrgForm.name"
+                  placeholder="名称"></el-input>
+      </el-form-item>
+      <el-form-item prop="description">
+        <el-input status-icon prefix-icon="fa fa-user" v-model="createOrgForm.description"
+                  placeholder="描述"></el-input>
+      </el-form-item>
+      <el-form-item prop="slogan">
+        <el-input prefix-icon="fa fa-user" v-model="createOrgForm.slogan"
+                  placeholder="口号" auto-complete="on">
+        </el-input>
+      </el-form-item>
+      <el-form-item prop="logo">
+        <el-input prefix-icon="fa fa-user" v-model="createOrgForm.logo" @keyup.enter.native="createOrgHandler"
+                  placeholder="logo" auto-complete="on">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="">
+        <el-button type="primary" :loading="loading" @click.native.prevent="createOrgHandler">创建
+        </el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 <script>
-import { list } from '@/api/organization'
+import { fetchRoot, createRoot, fetchList } from '@/api/organization'
+
+
+const orgEntity = {
+  name: '',
+  description: '',
+  slogan: '',
+  logo: ''
+}
+
 export default {
   name: 'Organization',
   filters: {
@@ -99,9 +105,11 @@ export default {
   },
   data() {
     return {
+      listOrgViewVisible:false,
+      createOrgViewVisible:false,
       list: null,
       total: null,
-      listLoading: true,
+      loading: true,
       listQuery: {
         page: 1,
         limit: 10,
@@ -109,21 +117,68 @@ export default {
       },
       sortable: null,
       oldList: [],
-      newList: []
+      newList: [],
+      createOrgForm: Object.assign({}, orgEntity),
+      createOrgRules: {
+        name: [{required: true, message: '名称不能为空', trigger: 'blur'},
+          {min: 2, max: 8, message: '最小2个字，最大8个字', trigger: 'blur'}],
+        description: [{required: false, message: '请输入描述', trigger: 'blur'},
+          {min: 1, max: 320, message: '1~120个字', trigger: 'blur'}],
+        slogan: [{required: false, message: '请输入口号', trigger: 'blur'},
+          {min: 1, max: 32, message: '1~32个字', trigger: 'blur'}],
+        logo: [{required: false, message: '请上传logo', trigger: 'blur'}]
+      },
     }
   },
   created() {
-    this.getList()
+    this.requestRoot()
   },
   methods: {
-    async getList() {
-      this.listLoading = true
-      const data = await list(this.listQuery)
-      this.list = data.org
+    async requestRoot() {
+      this.loading = true
+      const data = await fetchRoot()
+      if(data.meta.code == 404) {
+        this.createOrgViewVisible = true;
+          this.loading = false;
+      } else {
+        this.createOrgViewVisible = false;
+        this.listOrgViewVisible = true
+        this.requestList();
+      }
+      console.log("fetchRoot "+ JSON.stringify(data))
+    },
+    async requestList() {
+      this.loading = true
+      const data = await fetchList(this.listQuery)
+      this.list = data.data.org
       this.total = 100
-      this.listLoading = false
+      this.loading = false
       this.oldList = this.list.map(v => v.id)
       this.newList = this.oldList.slice()
+    },
+
+    createOrgHandler(){
+      this.$refs.createOrgForm.validate(valid => {
+        console.log(valid)
+        if (valid) {
+          this.loading = true
+          createRoot({"name":this.createOrgForm.name,"description":this.createOrgForm.description,"slogan":this.createOrgForm.slogan,"logo":this.createOrgForm.logo}).then(data => {
+            if (data.meta.code == 200){
+              this.$message.info(data.meta.message);
+              this.createOrgViewVisible = false;
+              this.listOrgViewVisible = true
+              this.requestList();
+            } else {
+              this.$message.error(data.meta.message);
+            }
+            this.loading = false
+          });
+
+        } else {
+          this.$message.error("验证失败");
+          return false
+        }
+      })
     }
   }
 }

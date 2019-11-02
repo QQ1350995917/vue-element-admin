@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true,
+      loading: true,
       downloadLoading: false,
       filename: '',
       autoWidth: true,
@@ -69,10 +69,10 @@ export default {
   },
   methods: {
     fetchData() {
-      this.listLoading = true
+      this.loading = true
       fetchList().then(response => {
         this.list = response.data.items
-        this.listLoading = false
+        this.loading = false
       })
     },
     handleDownload() {

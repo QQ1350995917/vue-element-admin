@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true,
+      loading: true,
       downloadLoading: false,
       filename: ''
     }
@@ -54,10 +54,10 @@ export default {
   },
   methods: {
     async fetchData() {
-      this.listLoading = true
+      this.loading = true
       const { data } = await fetchList()
       this.list = data.items
-      this.listLoading = false
+      this.loading = false
     },
     handleDownload() {
       this.downloadLoading = true

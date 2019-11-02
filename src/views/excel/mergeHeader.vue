@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true,
+      loading: true,
       downloadLoading: false
     }
   },
@@ -63,10 +63,10 @@ export default {
   },
   methods: {
     fetchData() {
-      this.listLoading = true
+      this.loading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.data.items
-        this.listLoading = false
+        this.loading = false
       })
     },
     handleDownload() {

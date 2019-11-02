@@ -77,7 +77,7 @@ export default {
     return {
       list: null,
       total: 0,
-      listLoading: true,
+      loading: true,
       listQuery: {
         page: 1,
         limit: 20
@@ -89,11 +89,11 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
+      this.loading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = response.data.total
-        this.listLoading = false
+        this.loading = false
       })
     }
   }

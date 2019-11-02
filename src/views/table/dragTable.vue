@@ -82,7 +82,7 @@ export default {
     return {
       list: null,
       total: null,
-      listLoading: true,
+      loading: true,
       listQuery: {
         page: 1,
         limit: 10
@@ -97,11 +97,11 @@ export default {
   },
   methods: {
     async getList() {
-      this.listLoading = true
+      this.loading = true
       const { data } = await fetchList(this.listQuery)
       this.list = data.items
       this.total = data.total
-      this.listLoading = false
+      this.loading = false
       this.oldList = this.list.map(v => v.id)
       this.newList = this.oldList.slice()
       this.$nextTick(() => {
