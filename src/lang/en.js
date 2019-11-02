@@ -129,6 +129,8 @@ export default {
     actions: 'Actions',
     edit: 'Edit',
     publish: 'Publish',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
     draft: 'Draft',
     delete: 'Delete',
     cancel: 'Cancel',

@@ -103,7 +103,8 @@ export const constantRoutes = [
         path: 'create',
         component: () => import('@/views/organization/create'),
         name: 'CreateOrg',
-        meta: { title: 'CreateOrg', icon: 'edit' }
+        meta: { title: 'CreateOrg', icon: 'edit' },
+        hidden: true
       },
       {
         path: 'edit/:id(\\d+)',
